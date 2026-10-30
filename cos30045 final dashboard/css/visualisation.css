@@ -1,0 +1,74 @@
+/* Okabe Ito palette */
+:root {
+    --color-orange: #E69F00;
+    --color-sky-blue: #56B4E9;
+    --color-bluish-green: #009E73;
+    --color-yellow: #F0E442;
+    --color-blue: #0072B2;
+    --color-vermilion: #D55E00;
+    --color-reddish-purple: #CC79A7;
+    --color-grey: #999999;
+}
+
+.filter-container {
+    margin: 10px 0px 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter {
+    min-width: 80px;
+    padding: 6px 12px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 1;
+    color: #ffffff;
+    font-weight: 500;
+    background-color: #d2691e;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.filter:hover {
+    background-color: #ffb347;
+}
+
+.filter.active {
+    cursor: default;
+    background-color: #ffcc80;
+    color: #5a3e2b;
+}
+
+.responsive-svg-container {
+    width: 100%;
+    max-width: 1000px;
+}
+
+@media screen and (max-width: 596px) {
+    .responsive-svg-container {
+        margin-bottom: 20px;
+    }
+}
+
+.axis-label {
+    font-family: 'Roboto', sans-serif;
+    font-size: 13px;
+    fill: #5a3e2b;
+    font-weight: 500;
+}
+
+.d3-tooltip {
+    position: absolute;
+    padding: 8px 12px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 13px;
+    background: rgba(90, 62, 43, 0.9);
+    color: #ffffff;
+    border-radius: 4px;
+    pointer-events: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
