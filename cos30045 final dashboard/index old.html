@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Australian Road Safety & Hospitalisation Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/visualisation.css?v=age-sex-grand-total-3">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+
+    <header>
+        <h1>Australian Road Safety Dashboard</h1>
+        <p style="color: #ffffff; font-weight: 400; margin-top: 5px;">
+            Visualising Hospitalisations & Bed Days from Road Injuries (2011–2021)
+        </p>
+    </header>
+
+    <main>
+        <!-- tab navigation -->
+        <nav class="tab-navigation">
+            <button class="tab-button active" data-tab="tab1">Overview & Trends</button>
+            <button class="tab-button" data-tab="tab2">State Breakdown</button>
+            <button class="tab-button" data-tab="tab3">First Nations Cohort</button>
+        </nav>
+
+        <!-- tab 1 -->
+        <section id="tab1" class="tab-content active">
+            <h2>Annual Hospitalisations & Demographic Trends</h2>
+            <p>
+                Explore overall longitudinal trends in hospital admissions and examine age-group distributions resulting
+                from traffic crashes.
+            </p>
+
+            <div class="dashboard-grid">
+                <!-- chart 1 -->
+                <div class="chart-card annual-trend-card">
+                    <h3>Annual Trends: Total or by Group</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 10px;">
+                        Switch between absolute values and a relative index (2011 = 100) to compare changes across groups.
+                        Choose the Australia-wide total or up to 12 category series.
+                    </p>
+                    <div id="filters_trend" class="annual-trend-controls"></div>
+                    <div id="annual-trend-chart" class="responsive-svg-container"></div>
+                    <p id="annual-trend-summary" class="chart-note"></p>
+                </div>
+
+                <!-- chart 2 -->
+                <div class="chart-card">
+                    <h3>Hospitalisations by Age Group</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 10px;">
+                        Distribution of road trauma hospitalisations across age brackets.
+                    </p>
+                    <div id="filters_age" class="filter-container"></div>
+                    <div id="age-group-chart" class="responsive-svg-container"></div>
+                </div>
+            </div>
+
+            <div class="chart-card high-density-card">
+                <h3>Monthly Injury Patterns</h3>
+                <p class="chart-description">
+                    Traffic is selected by default. Compare monthly values across years, then filter by injury cause and population group.
+                    Cell colour and labels show the selected measure; row and column totals provide context.
+                </p>
+                <div id="high-density-heatmap-controls" class="heatmap-controls"></div>
+                <div id="high-density-heatmap-chart" class="high-density-chart" role="region" aria-label="Monthly road injury heatmap"></div>
+                <p class="chart-note">
+                    Shaded years mark comparability breaks: Victoria from 2012 and New South Wales from 2017.
+                    Changes in emergency-department admission policy may affect comparisons across these years.
+                </p>
+            </div>
+
+            <div class="chart-card high-density-card">
+                <h3>Who Is Being Hospitalised? Annual Profile Matrix</h3>
+                <p class="chart-description">
+                    Compare annual injury burden across road users, age groups, remoteness, sex, or counterparties.
+                    Switch between counts and each year's percentage to separate volume from changing composition.
+                </p>
+                <div id="profile-matrix-controls" class="profile-matrix-controls"></div>
+                <div id="profile-matrix-chart" class="profile-matrix-chart" role="region" aria-label="Annual injury burden by selected population group"></div>
+                <p class="chart-note">
+                    The 2012 and 2017 markers indicate documented admission-policy breaks in Victoria and New South Wales.
+                    Percentages are calculated within each year; period totals are shown for count mode.
+                </p>
+            </div>
+
+            <div class="chart-card high-density-card">
+                <h3>Road Users and Their Counterparties</h3>
+                <p class="chart-description">
+                    Trace applicable injury burden from road-user type to the other party or object involved.
+                    Link width shows the selected measure; link colour follows the road-user category.
+                </p>
+                <div id="road-user-sankey-controls" class="road-user-sankey-controls"></div>
+                <div id="road-user-sankey-chart" class="road-user-sankey-chart" role="region" aria-label="Road user to counterparty Sankey diagram">
+                    <div class="road-user-sankey-loading">Loading road-user flows...</div>
+                </div>
+                <p id="road-user-sankey-summary" class="chart-note" aria-live="polite"></p>
+            </div>
+
+            <div class="chart-card">
+                <h3>Hospitalisations by Age Group and Year</h3>
+                <p class="chart-description">
+                    Explore how road crash hospitalisations change across age groups
+                    from 2011 to 2021.
+                </p>
+                <div id="age-year-heatmap-chart"></div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Age Group Composition Over Time</h3>
+                <p class="chart-description">
+                    Compare the percentage contribution of each age group to total
+                    annual hospitalisations.
+                </p>
+                <div id="age-composition-chart"></div>
+            </div>
+
+            <div class="chart-card high-density-card">
+                <h3>Age-Group Grand Totals by Remoteness and Sex</h3>
+                <p class="chart-description">
+                    Use the year slider to compare age-group grand totals (background bars). Each remoteness child bar
+                    is stacked by sex. Count-case values exclude N.P. records; bed days include all reported values.
+                </p>
+                <div id="age-sex-total-controls" class="age-sex-total-controls"></div>
+                <div id="age-sex-total-chart" class="age-sex-total-chart" role="region" aria-label="Selected-year age-group grand totals with remoteness child bars stacked by sex"></div>
+                <p id="age-sex-total-summary" class="chart-note"></p>
+            </div>
+
+            </section>
+        <!-- tab 1 end -->
+
+        <!-- tab 2: State and Territory -->
+        <section id="tab2" class="tab-content">
+            <h2>State and Territory Jurisdictional Breakdowns</h2>
+            <p>
+                Compare road trauma hospitalisations and healthcare resource consumption (bed days) across Australian
+                states and territories.
+            </p>
+
+            <div class="chart-card state-map-card">
+                <h3>Where the Burden Falls</h3>
+                <p class="chart-description">
+                    Annual traffic-injury totals by state and territory. Select a year and measure to compare jurisdictions.
+                </p>
+                <div id="state-map-controls" class="state-map-controls"></div>
+                <div id="state-choropleth-chart" class="state-choropleth-chart" role="region" aria-label="Australian state and territory choropleth map"></div>
+                <div id="state-map-summary" class="state-map-summary" aria-live="polite"></div>
+                <p class="chart-note">
+                    Values are counts, not population-adjusted rates. N.P. means not applicable and is displayed as no data, not zero.
+                    Boundaries: <a href="https://github.com/rowanhogan/australian-states" target="_blank" rel="noreferrer">Australian States GeoJSON</a>.
+                </p>
+            </div>
+
+            <div class="chart-card state-trends-card">
+                <h3>Annual Trends by Jurisdiction</h3>
+                <p class="chart-description">
+                    Compare all jurisdictions from 2011 to 2021 on one shared count scale. Gaps indicate N.P. (not applicable)
+                    in at least one six-month reporting period; they are not zero. Dashed markers show the documented
+                    Victoria (2012) and New South Wales (2017) admission-policy breaks.
+                </p>
+                <div id="state-trend-controls" class="state-trend-controls"></div>
+                <div id="state-trend-chart" class="state-trend-chart" role="region" aria-label="Annual state and territory trend comparison"></div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- state chart  -->
+                <div class="chart-card">
+                    <h3>Hospitalisations by Jurisdiction</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 10px;">
+                        Total hospital admissions across 2011–2021. N.P. values are not counted as zero.
+                    </p>
+                    <div id="jurisdiction-bar-chart" class="responsive-svg-container"></div>
+                </div>
+
+                <!-- state bed days -->
+                <div class="chart-card">
+                    <h3>Healthcare Burden: Bed Days by Jurisdiction</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 10px;">
+                        Total inpatient bed days across 2011–2021. N.P. values are not counted as zero.
+                    </p>
+                    <div id="jurisdiction-beddays-chart" class="responsive-svg-container"></div>
+                </div>
+            </div>
+        </section>
+        <!-- tab 2 end -->
+
+        <!-- tab 3  -->
+        <section id="tab3" class="tab-content">
+            <h2>First Nations Equity Analysis</h2>
+            <p>
+                Examine road trauma hospitalisations and health disparities among First Nations people across geographic
+                remoteness zones.
+            </p>
+
+            <div class="dashboard-grid">
+                <div class="chart-card">
+                    <h3>Hospitalisations by Remoteness Area & Indigenous Status</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 10px;">
+                        Comparative analysis of road crash admissions across Major Cities, Regional, and Remote sectors.
+                    </p>
+                    <div id="first-nations-chart" class="responsive-svg-container"></div>
+                </div>
+            </div>
+
+            <div class="chart-card high-density-card">
+                <h3>Annual First Nations Hospitalisation Patterns</h3>
+                <p class="chart-description">
+                    Compare annual category patterns for First Nations and non-Indigenous people. Choose a breakdown and
+                    view either hospitalisation counts or each category's share of its status group's annual total.
+                    N.P. indicates that at least one six-month reporting period is not applicable; percentage views are
+                    unavailable for a status-year if any category is N.P.
+                </p>
+                <div id="first-nations-heatmap-controls" class="profile-matrix-controls"></div>
+                <div id="first-nations-heatmap-chart" class="first-nations-heatmap-chart" role="region" aria-label="Annual hospitalisation heatmap by First Nations status"></div>
+            </div>
+        </section>
+        <!-- tab 3 end -->
+    </main>
+
+
+    <script src="js/shared-constants.js?v=palette-3"></script>
+    <script src="js/annual-trend.js?v=annual-relative-2"></script>
+    <script src="js/age-group-chart.js"></script>
+    <script src="js/age-sex-grand-total.js?v=age-sex-grand-total-3"></script>
+    <script src="js/state-breakdown.js?v=state-trends-2"></script>
+    <script src="js/interactions.js"></script>
+    <script src="js/first-nations-analysis.js?v=heatmap-1"></script>
+    <script src="js/high-density-heatmap.js?v=palette-2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+    <script src="js/road-user-sankey.js?v=palette-3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tabularjs/dist/index.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="js/load-data.js?v=age-sex-grand-total-2"></script>
+
+</body>
+
+</html>
